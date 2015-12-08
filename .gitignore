@@ -28,5 +28,4 @@ out
 *.sc
 
 # GitBook
-doc/_book
-/_book
+doc
