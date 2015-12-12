@@ -6,19 +6,18 @@ scalaVersion := "2.11.7"
 enablePlugins(SbtWeb)
 
 libraryDependencies ++= {
-  val akkaV       = "2.3.10"
-  val akkaStreamV = "1.0-RC2"
+  val akkaV       = "2.3.12"
+  val akkaStreamV = "2.0-M2"
   val scalaTestV  = "2.2.4"
   Seq(
-    "com.typesafe.akka" %% "akka-actor"                           % akkaV,
-    "com.typesafe.akka" %% "akka-stream-experimental"             % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-core-experimental"          % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-scala-experimental"         % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-spray-json-experimental"    % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-testkit-scala-experimental" % akkaStreamV,
-    "org.scalatest"     %% "scalatest"                            % scalaTestV % "test",
-    "com.lihaoyi" %% "autowire" % "0.2.5",
-    "com.lihaoyi" %% "upickle" % "0.2.8"
+    "com.typesafe.akka" % "akka-actor_2.11"                           % akkaV,
+    "com.typesafe.akka" % "akka-stream-experimental_2.11"             % akkaStreamV,
+    "com.typesafe.akka" % "akka-http-core-experimental_2.11"          % akkaStreamV,
+    "com.typesafe.akka" % "akka-http-experimental_2.11"               % akkaStreamV,
+    "com.typesafe.akka" % "akka-http-testkit-experimental_2.11"       % akkaStreamV,
+    "org.scalatest"     %% "scalatest" % scalaTestV   % "test",
+    "com.lihaoyi" %% "upickle" % "0.2.8",
+    "com.lihaoyi" %% "autowire" % "0.2.5"
   )
 }
 

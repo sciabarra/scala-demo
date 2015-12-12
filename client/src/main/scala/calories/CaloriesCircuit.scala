@@ -2,8 +2,6 @@ package calories
 
 import diode.Circuit
 
-case class CaloriesModel(user: Option[String])
-
 /**
   * Created by msciab on 09/12/15.
   */

@@ -1,23 +1,33 @@
 package calories
 
-import diode.{ModelRW, ActionHandler}
+import calories._
+import diode.{Effect, ModelRW, ActionHandler}
+import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
+import scalajs.concurrent.JSExecutionContext.Implicits.runNow
+import upickle._
 
 /**
   * Created by msciab on 11/12/15.
   */
-
-case class Login(username: String, password: String)
-
-case object Logout
-
-class LoginHandler[M](modelRW: ModelRW[M, Option[String]])
+class LoginHandler[M](modelRW: ModelRW[M, Option[User]])
   extends ActionHandler(modelRW) {
+
+
   override def handle = {
-    case Login(user: String, pass: String) =>
-      // TODO ajax call
-      updated(Some(user))
+    case Login(username, password) =>
+      effectOnly(Effect(
+        Ajax.get(s"${dom.location.origin}/login/${username}").map { r =>
+          read[User](r.responseText)
+        }))
     case Logout =>
-      // TODO ajax call
+      effectOnly(Effect(
+        Ajax.get(s"${dom.location.origin}/logout").map { r =>
+          read[User](r.responseText)
+        }))
+    case User("", _, _) =>
       updated(None)
+    case user@User(name, role, ticket) =>
+      updated(Some(user))
   }
 }
