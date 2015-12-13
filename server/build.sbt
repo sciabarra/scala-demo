@@ -21,11 +21,12 @@ libraryDependencies ++= {
   )
 }
 
-
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
-unmanagedSourceDirectories in Compile ++= Seq(
-  baseDirectory.value.getParentFile /  "src" / "main" / "scala")
+// support shared with and without symbolic - symlink needed for intellij
+unmanagedSourceDirectories in Compile ++= (if( (baseDirectory.value / "shared" / "src").isDirectory)
+  Seq(baseDirectory.value / "shared" /  "src" / "main" / "scala")
+  else Seq( baseDirectory.value.getParentFile / "shared" /  "src" / "main" / "scala" ))
 
 
 Revolver.settings
