@@ -7,6 +7,9 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import akka.http.scaladsl.server.Directives._
 
+/**
+  * The backend server, handle http requests
+  */
 object CaloriesServer
   extends App
   with StaticRoutes
@@ -17,8 +20,8 @@ object CaloriesServer
   val config = ConfigFactory.load()
   val logger = Logging(system, getClass)
 
-  println(config.getString("files.home"))
-  println(config.getString("directories.app"))
+  //println(config.getString("files.home"))
+  //println(config.getString("directories.app"))
 
   Http().bindAndHandle(
     staticRoutes ~ loginRoutes,

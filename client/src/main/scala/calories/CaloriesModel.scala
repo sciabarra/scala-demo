@@ -5,5 +5,5 @@ package calories
   */
 
 
-case class CaloriesModel(user: Option[User])
+case class CaloriesModel(user: Option[LoggedUser])
 

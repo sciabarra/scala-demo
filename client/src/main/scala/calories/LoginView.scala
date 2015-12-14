@@ -6,7 +6,7 @@ import scalatags.JsDom.all._
 /**
   * Created by msciab on 11/12/15.
   */
-class LoginView(userOpt: ModelR[Option[User]], dispatch: Dispatcher) {
+class LoginView(userOpt: ModelR[Option[LoggedUser]], dispatch: Dispatcher) {
   def render = div(
     if (userOpt().isEmpty)
       p("Please Login")

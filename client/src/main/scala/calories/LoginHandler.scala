@@ -10,24 +10,23 @@ import upickle._
 /**
   * Created by msciab on 11/12/15.
   */
-class LoginHandler[M](modelRW: ModelRW[M, Option[User]])
+class LoginHandler[M](modelRW: ModelRW[M, Option[LoggedUser]])
   extends ActionHandler(modelRW) {
-
 
   override def handle = {
     case Login(username, password) =>
       effectOnly(Effect(
         Ajax.get(s"${dom.location.origin}/login/${username}").map { r =>
-          read[User](r.responseText)
+          read[LoggedUser](r.responseText)
         }))
     case Logout =>
       effectOnly(Effect(
         Ajax.get(s"${dom.location.origin}/logout").map { r =>
-          read[User](r.responseText)
+          read[LoggedUser](r.responseText)
         }))
-    case User("", _, _) =>
+    case LoggedUser("", _, _,_) =>
       updated(None)
-    case user@User(name, role, ticket) =>
+    case user@LoggedUser(ticker, role, name, username) =>
       updated(Some(user))
   }
 }

@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContextExecutor
 import akka.http.scaladsl.server.Directives._
 
 /**
- * Created by msciab on 08/05/15.
+ * Serve http requests for static files
  */
 trait StaticRoutes {
 
@@ -25,5 +25,4 @@ trait StaticRoutes {
   } ~ pathPrefix("lib") {
     getFromBrowseableDirectory(config.getString("directories.lib"))
   }
-
 }
