@@ -17,12 +17,13 @@ import upickle._
   * Created by msciab on 12/12/15.
   */
 trait LoginRoutes extends UpickleSupport {
-  val config: Config
+
+  /*val config: Config
   val logger: LoggingAdapter
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
-  implicit val materializer: ActorMaterializer
+  implicit val materializer: ActorMaterializer*/
 
   def loginRoutes = path("login") {
     post {

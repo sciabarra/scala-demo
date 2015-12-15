@@ -10,7 +10,7 @@ val akkaStreamV = "2.0-M2"
 val scalaTestV  = "2.2.4"
 
 libraryDependencies ++= Seq("junit" % "junit" % "4.11" % "test"
-     , "ch.qos.logback"         % "logback-classic" % "1.1.3"
+     //, "ch.qos.logback"         % "logback-classic" % "1.1.3"
      , "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
      , "com.novocode"           % "junit-interface" % "0.11" % "test"
      , "com.typesafe.akka"      % "akka-actor_2.11"                        % akkaV
@@ -22,8 +22,10 @@ libraryDependencies ++= Seq("junit" % "junit" % "4.11" % "test"
      , "com.jayway.restassured" % "json-path" % "2.4.1" % "test"
      , "com.jayway.restassured" % "json-schema-validator" % "2.4.1" % "test"
      , "com.lihaoyi"            %% "upickle" % "0.2.8"
+     , "org.webjars.bower"      % "bootstrap" % "3.0.0"
+     , "org.webjars"            % "bootstrap-datepicker" % "1.4.0"
+     , "org.webjars"            % "bootstrap-timepicker" % "0.2.3-1"
      )
-
 
 enablePlugins(SbtWeb)
 

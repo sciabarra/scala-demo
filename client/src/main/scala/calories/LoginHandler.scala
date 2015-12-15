@@ -24,9 +24,9 @@ class LoginHandler[M](modelRW: ModelRW[M, Option[LoggedUser]])
         Ajax.get(s"${dom.location.origin}/logout").map { r =>
           read[LoggedUser](r.responseText)
         }))
-    case LoggedUser("", _, _,_) =>
+    case LoggedUser(Left(error), _, _,_) =>
       updated(None)
-    case user@LoggedUser(ticker, role, name, username) =>
+    case user@LoggedUser(ticket, role, name, username) =>
       updated(Some(user))
   }
 }

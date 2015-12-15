@@ -3,17 +3,17 @@ organization := "com.sciabarra"
 version := "1.0-SNAPSHOT"
 scalaVersion := "2.11.7"
 
-libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "0.8.2",
-  "com.lihaoyi" %%% "scalatags" % "0.5.3",
-  "me.chrons" %%% "diode" % "0.2.0",
-  "com.lihaoyi" %%% "upickle" % "0.2.8",
-  "com.lihaoyi" %%% "utest" % "0.3.1" % "test"
-)
+libraryDependencies ++=
+ Seq("org.scala-js"  %%% "scalajs-dom" % "0.8.2"
+    , "com.lihaoyi"   %%% "scalatags" % "0.5.3"
+    , "me.chrons"     %%% "diode" % "0.2.0"
+    , "com.lihaoyi"   %%% "upickle" % "0.2.8"
+    , "com.lihaoyi"   %%% "utest" % "0.3.1" % "test"
+    , "be.doeraene"   %%% "scalajs-jquery" % "0.8.1"
+    )
 
 enablePlugins(ScalaJSPlugin)
 
-//workbenchSettings
 
 // support shared with and without symbolic - symlink needed for intellij
 unmanagedSourceDirectories in Compile ++= (if( (baseDirectory.value / "shared" / "src").isDirectory)
