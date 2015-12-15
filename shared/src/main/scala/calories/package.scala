@@ -9,7 +9,7 @@ package object calories {
   case object Logout
 
   // responses
-  case class LoggedUser(ticketOrError: Either[String, String],
+  case class LoggedUser(ticket: Either[String, Int],
                         role: String = "",
                         name: String = "",
                         username: String = "")

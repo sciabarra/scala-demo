@@ -3,11 +3,14 @@ package calories
 import java.io.{FileWriter, FileReader, File}
 import java.util.{Properties, Random}
 
+import com.typesafe.scalalogging.LazyLogging
+
 /**
   * Manage tickets, issuing and cheking validity
   */
-object BoxOffice {
-  var roleByTicket = Map.empty[String, String]
+object BoxOffice extends LazyLogging {
+
+  var roleByTicket = Map.empty[Int, String]
 
   // utils
   def file(dir: File, file: String) = new java.io.File(dir, file)
@@ -17,11 +20,10 @@ object BoxOffice {
   // generate tickets
   val rnd = new Random()
 
-  def genTicket = rnd.nextLong().toHexString
-
+  def genTicket = Math.abs(rnd.nextInt())
 
   // check the role - empty string if no role
-  def checkRole(ticket: String): String = roleByTicket.getOrElse(ticket, "")
+  def checkRole(ticket: Int): String = roleByTicket.getOrElse(ticket, "")
 
   /**
     * Check the user in the "data base" then issue a ticket
@@ -31,9 +33,11 @@ object BoxOffice {
     * @return
     */
   def issue(user: String, password: String): LoggedUser = {
+    logger.debug(s"issue: ${user}/${password}")
     // load user data
     val userFolder = file(file("data"), user)
     val prpFile = file(userFolder, "user.properties")
+    logger.debug(s"${prpFile.getAbsolutePath}")
     if (userFolder.exists && prpFile.exists) {
       val prp = new Properties
       prp.load(new FileReader(prpFile))
@@ -61,11 +65,15 @@ object BoxOffice {
     * @param ticket
     * @return
     */
-  def invalidate(ticket: String) = {
+  def invalidate(ticket: Int) = {
     println(s"invalidate: ${ticket}")
-    roleByTicket -= ticket
-    println(roleByTicket)
-    LoggedUser(Left("logged out"))
+    if (checkRole(ticket).isEmpty)
+      LoggedUser(Left("no such ticket"))
+    else {
+      roleByTicket -= ticket
+      println(roleByTicket)
+      LoggedUser(Left("logged out"))
+    }
   }
 
   /**
@@ -79,17 +87,21 @@ object BoxOffice {
   def register(name: String, user: String, password: String) = {
     println(s"register: ${name}/${password}")
     if (!user.forall(_.isLetterOrDigit)) {
-      LoggedUser(Left("Username must be all letter or digits"))
+      LoggedUser(Left("username must be all letter or digits"))
     } else {
       val userFolder = file(file("data"), user)
       val prpFile = file(userFolder, "user.properties")
-      userFolder.mkdirs
-      val prp = new Properties
-      prp.setProperty("name", name)
-      prp.setProperty("role", "user")
-      prp.setProperty("password", password)
-      prp.store(new FileWriter(prpFile), "# created by Calories Server")
-      issue(user, password)
+      if(prpFile.exists()) {
+        LoggedUser(Left("username already exists"))
+      }  else {
+        userFolder.mkdirs
+        val prp = new Properties
+        prp.setProperty("name", name)
+        prp.setProperty("role", "user")
+        prp.setProperty("password", password)
+        prp.store(new FileWriter(prpFile), "# created by Calories Server")
+        issue(user, password)
+      }
     }
   }
 
@@ -97,7 +109,7 @@ object BoxOffice {
     * Removing all data - carefully !
     * @param user
     */
-  def cleanup(user: String): String = {
+  def cleanup(user: String): LoggedUser = {
     println(s"cleanup: ${user}")
     val userFolder = file(file("data"), user)
     val prpFile = file(userFolder, "user.properties")
@@ -107,9 +119,9 @@ object BoxOffice {
           file.delete()
       prpFile.delete
       userFolder.delete
-      s"deleted ${user}"
+      LoggedUser(Left(s"deleted ${user}"))
     } else {
-      s"not found ${user}"
+      LoggedUser(Left(s"not found ${user}"))
     }
   }
 }

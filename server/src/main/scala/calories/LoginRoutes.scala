@@ -33,10 +33,10 @@ trait LoginRoutes extends UpickleSupport {
           }
       }
     }
-  } ~ path("logout" / Segment) {
-    user =>
+  } ~ path("logout" / IntNumber) {
+    ticket =>
       complete {
-        BoxOffice.invalidate(user)
+        BoxOffice.invalidate(ticket)
       }
   } ~ path("register") {
     post {

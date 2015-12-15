@@ -22,76 +22,139 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class LoginTest {
+
     @Before
     public void init() {
-        /**
-         * Initialize setting the parser to JSON and the port to 9000
-         * Extract the id as the first one
-         */
         port = 9000;
         defaultParser = Parser.JSON;
-        /*
-        firstId = get("/todo/test").then()
-                //.log().body()
-                .body("count", is(1))
-                .extract().path("items[0].id")
-        ;*/
-        //System.out.println(firstId);
     }
 
     @Test
-    public void testLoginOk() {
+    public void testLoginOkLogout() {
+        int ticket = given()
+                .formParam("username", "admin")
+                .formParam("password", "welcome1")
+                //with()
+                //.body(map("username", "admin", "password", "Welcome1"))
+                .post("/login").then()
+                .body("role", is("admin"))
+                .body("name", is("Administrator"))
+                .body("username", is("admin"))
+                .body("ticket[0]", is(1))
+                .log().body()
+                .extract().path("ticket[1]");
+
         given().
-                formParam("username", "admin").
+                get("/logout/" + ticket).then()
+                .log().body()
+                .body("ticket[1]", is("logged out"))
+        ;
+        given().
+                get("/logout/" + ticket).then()
+                .log().body()
+                .body("ticket[1]", is("no such ticket"))
+        ;
+    }
+
+    @Test
+    public void testLoginKo() {
+        given().
+                formParam("username", "admin1").
                 formParam("password", "welcome1").
                 post("/login").then()
-                .log().body()
-                .body("name", is("Admin"))
-                .body("username", is("admin"))
-                .body("ticket", not(isEmptyString()))
-        //
-        // .body("count", is(1))
-        //.body("items[0].action", is("Add things to do."))
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("no such user - please register"))
+        //.log().body()
         ;
-    }
-
-    /*
-    @Test
-    public void testPost() {
-        / **
-         * Note here you constuct a json request on the fly with map(...) and list(...)
-         * Example map("a", "1", "b", list(2, 3), "c", list(map("d", 4), map("d", 5))
-         * /
-        with()
-                .body(map("action", "first", "priority", "HIGH"))
-                .post("/todo").then()
-                //.log().body()
-                .body("count", is(2))
-                .body("items[1].action", is("first"))
-                .body("items[1].priority", is("HIGH"))
-        ;
-
-    }
-
-    @Test
-    public void testPut() {
-        with()
-                .body(map("id", firstId, "action", "replaced", "priority", "LOW"))
-                .put("/todo").then()
-                //.log().body()
-                .body("count", is(1))
-                .body("items[0].action", is("replaced"))
-                .body("items[0].priority", is("LOW"))
+        given().
+                formParam("username", "admin").
+                formParam("password", "welcome").
+                post("/login").then()
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("username or password incorrect"))
+        //.log().body()
         ;
     }
 
     @Test
-    public void testDelete() {
-        // given().log().all().
-        delete("/todo/{id}", firstId).then()
+    public void testRegister() {
+        // test wrong user
+        given().
+                formParam("username", "pinco pallino").
+                formParam("name", "Pinco Pallino").
+                formParam("password", "welcome").
+                post("/register").then()
                 //.log().body()
-                .body("count", is(0))
-                .body("items", is(list()))
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("username must be all letter or digits"))
         ;
-    }*/
+        // test existing user
+        given().
+                formParam("username", "bob").
+                formParam("password", "welcome").
+                formParam("name", "Bob").
+                post("/register").then()
+                //.log().body()
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("username already exists"))
+        ;
+
+        // register
+        given().
+                formParam("username", "mike").
+                formParam("password", "hello").
+                formParam("name", "Michele")
+                .post("/register").then()
+                //.log().body()
+                .body("ticket[0]", is(1))
+                .body("username", is("mike"))
+                .body("name", is("Michele"))
+                .body("role", is("user"))
+        ;
+
+        // test login
+        int ticket = given()
+                .formParam("username", "mike")
+                .formParam("password", "hello")
+                .post("/login").then()
+                .body("role", is("user"))
+                .body("name", is("Michele"))
+                .body("username", is("mike"))
+                .body("ticket[0]", is(1))
+                //.log().body()
+                .extract().path("ticket[1]");
+
+        // ri-register
+        given().
+                formParam("username", "mike").
+                formParam("password", "hello").
+                formParam("name", "Michele")
+                .post("/register").then()
+                //.log().body()
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("username already exists"))
+        ;
+
+        //  login again
+        get("/cleanup/mike").then()
+                .body("ticket[1]", is("deleted mike"))
+        //.log().body()
+        ;
+
+        get("/cleanup/mike").then()
+                .body("ticket[1]", is("not found mike"))
+        //.log().body()
+        ;
+
+        // no login
+        given().
+                formParam("username", "mike").
+                formParam("password", "hello").
+                post("/login").then()
+                //.log().body()
+                .body("ticket[0]", is(0))
+                .body("ticket[1]", is("no such user - please register"))
+        ;
+
+    }
 }
