@@ -52,7 +52,6 @@ class MainView(dispatch: Dispatcher) {
       """))
   )
 
-
   def caloriesTable = table(cls := "table table-bordered",
     thead(
       tr(

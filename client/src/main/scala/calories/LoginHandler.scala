@@ -10,23 +10,24 @@ import upickle._
 /**
   * Created by msciab on 11/12/15.
   */
-class LoginHandler[M](modelRW: ModelRW[M, Option[LoggedUser]])
+class LoginHandler[M](modelRW: ModelRW[M, LoggedUser])
   extends ActionHandler(modelRW) {
+
+  val fm = Map("Content-Type" -> "application/x-www-form-urlencoded")
 
   override def handle = {
     case Login(username, password) =>
       effectOnly(Effect(
-        Ajax.get(s"${dom.location.origin}/login/${username}").map { r =>
+        Ajax.post(s"${dom.location.origin}/login",
+          s"username=${username}&password=${password}", 0,fm).map { r =>
           read[LoggedUser](r.responseText)
         }))
-    case Logout =>
+    case Logout(ticket) =>
       effectOnly(Effect(
-        Ajax.get(s"${dom.location.origin}/logout").map { r =>
+        Ajax.get(s"${dom.location.origin}/logout/${ticket}").map { r =>
           read[LoggedUser](r.responseText)
         }))
-    case LoggedUser(Left(error), _, _,_) =>
-      updated(None)
-    case user@LoggedUser(ticket, role, name, username) =>
-      updated(Some(user))
+    case user@LoggedUser(_, _, _, _) =>
+      updated(user)
   }
 }

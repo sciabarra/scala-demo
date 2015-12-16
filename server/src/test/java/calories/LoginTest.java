@@ -41,17 +41,17 @@ public class LoginTest {
                 .body("name", is("Administrator"))
                 .body("username", is("admin"))
                 .body("ticket[0]", is(1))
-                .log().body()
+                //.log().body()
                 .extract().path("ticket[1]");
 
         given().
                 get("/logout/" + ticket).then()
-                .log().body()
+                //.log().body()
                 .body("ticket[1]", is("logged out"))
         ;
         given().
                 get("/logout/" + ticket).then()
-                .log().body()
+                //.log().body()
                 .body("ticket[1]", is("no such ticket"))
         ;
     }

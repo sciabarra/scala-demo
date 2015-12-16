@@ -7,7 +7,9 @@ import diode.Circuit
   */
 object CaloriesCircuit extends Circuit[CaloriesModel] {
 
-  protected var model: CaloriesModel = CaloriesModel(None)
+  val msg = """Please login or register.""".stripMargin
+
+  protected var model: CaloriesModel = CaloriesModel(LoggedUser(Left(msg)))
 
   protected def loginHandler = new LoginHandler(
     zoomRW(m => m.user) // extraction fn

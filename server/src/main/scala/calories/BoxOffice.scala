@@ -52,10 +52,10 @@ object BoxOffice extends LazyLogging {
           username = user,
           role = role)
       } else {
-        LoggedUser(Left("username or password incorrect"))
+        LoggedUser(Left("Username or password incorrect!"))
       }
     } else {
-      LoggedUser(Left("no such user - please register"))
+      LoggedUser(Left("No such user. Please register!"))
     }
   }
 
@@ -67,12 +67,14 @@ object BoxOffice extends LazyLogging {
     */
   def invalidate(ticket: Int) = {
     println(s"invalidate: ${ticket}")
-    if (checkRole(ticket).isEmpty)
-      LoggedUser(Left("no such ticket"))
-    else {
+    if(ticket==0) {
+      LoggedUser(Left("Please login or register."))
+    } else if (checkRole(ticket).isEmpty) {
+      LoggedUser(Left("No such ticket!"))
+    } else {
       roleByTicket -= ticket
       println(roleByTicket)
-      LoggedUser(Left("logged out"))
+      LoggedUser(Left("Logged out."))
     }
   }
 

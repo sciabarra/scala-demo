@@ -6,7 +6,7 @@ package object calories {
   // requests
   case class Login(username: String, password: String)
 
-  case object Logout
+  case class Logout(ticket: Int)
 
   // responses
   case class LoggedUser(ticket: Either[String, Int],
