@@ -13,7 +13,7 @@ object CaloriesServer
   extends App
   with StaticRoutes
   with LoginRoutes
-  with StoreRoutes
+  with MealRoutes
   with UpickleSupport {
 
   implicit val system = ActorSystem()
@@ -22,8 +22,7 @@ object CaloriesServer
   val config = ConfigFactory.load()
 
   Http().bindAndHandle(
-    staticRoutes ~ storeRoutes ~ loginRoutes,
+    staticRoutes ~ mealRoutes ~ loginRoutes,
     config.getString("http.interface"),
     config.getInt("http.port"))
-
 }

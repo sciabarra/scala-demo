@@ -10,7 +10,7 @@ import com.typesafe.scalalogging.LazyLogging
   */
 object BoxOffice extends LazyLogging {
 
-  var roleByTicket = Map.empty[Int, String]
+  var userByTicket = Map.empty[Int, LoggedUser]
 
   // utils
   def file(dir: File, file: String) = new java.io.File(dir, file)
@@ -22,8 +22,20 @@ object BoxOffice extends LazyLogging {
 
   def genTicket = Math.abs(rnd.nextInt())
 
-  // check the role - empty string if no role
-  def checkRole(ticket: Int): String = roleByTicket.getOrElse(ticket, "")
+  /**
+    * Check if the user with the given ticket has the requested role
+    * @param ticket
+    * @param role
+    * @return
+    */
+  def checkRole(ticket: Int, role: String) = userByTicket.get(ticket).map(_.role == role).getOrElse(false)
+
+  val noSuchUser = LoggedUser(Left("No such user!"))
+
+  /**
+    * get the user by ticket
+    */
+  def getUser(ticket: Int) = userByTicket.getOrElse(ticket, noSuchUser)
 
   /**
     * Check the user in the "data base" then issue a ticket
@@ -46,12 +58,13 @@ object BoxOffice extends LazyLogging {
         // generate ticket and record it
         val ticket = genTicket
         val role = prp.getProperty("role")
-        roleByTicket += (ticket -> "user")
-        LoggedUser(Right(ticket),
+        val loggedUser = LoggedUser(Right(ticket),
           name = prp.getProperty("name"),
           username = user,
           role = role,
           calories = prp.getProperty("calories").toInt)
+        userByTicket += (ticket -> loggedUser)
+        loggedUser
       } else {
         LoggedUser(Left("Username or password incorrect!"))
       }
@@ -67,14 +80,13 @@ object BoxOffice extends LazyLogging {
     * @return
     */
   def invalidate(ticket: Int) = {
-    println(s"invalidate: ${ticket}")
+    logger.debug(s"invalidate: ${ticket}")
     if (ticket == 0) {
       LoggedUser(Left("Please login or register."))
-    } else if (checkRole(ticket).isEmpty) {
+    } else if (userByTicket(ticket).ticket.isLeft) {
       LoggedUser(Left("No such ticket!"))
     } else {
-      roleByTicket -= ticket
-      println(roleByTicket)
+      userByTicket -= ticket
       LoggedUser(Left("Logged out."))
     }
   }
@@ -86,7 +98,7 @@ object BoxOffice extends LazyLogging {
     * @return the logged user (or a logged user with an error)
     */
   def register(req: Register) = {
-    println(s"register: ${req}")
+    logger.debug(s"register: ${req}")
 
     if (!req.username.forall(_.isLetterOrDigit)) {
       LoggedUser(Left("Username must be all letter or digits!"))
@@ -113,7 +125,7 @@ object BoxOffice extends LazyLogging {
     * @param user
     */
   def cleanup(user: String): LoggedUser = {
-    println(s"cleanup: ${user}")
+    logger.debug(s"cleanup: ${user}")
     val userFolder = file(file("data"), user)
     val prpFile = file(userFolder, "user.properties")
     if (userFolder.exists && prpFile.exists) {
