@@ -49,7 +49,7 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
         val l = Login(
           $("#login").value().toString,
           $("#password").value().toString)
-        println(l)
+        //println(l)
         dispatch(l)
       }
     )
@@ -66,26 +66,30 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
       input(id := "calories", placeholder := "Daily Calories Target", `type` := "number",
         cls := "form-control", required := "")),
     div(cls := "form-group",
-      input(id := "login", placeholder := "Login", `type` := "text",
+      input(id := "username", placeholder := "Login", `type` := "text",
         cls := "form-control", required := "")),
     div(cls := "form-group",
-      input(id := "password", placeholder := "Password", `type` := "text",
+      input(id := "password1", placeholder := "Password", `type` := "text",
         cls := "form-control", required := "")),
     div(cls := "form-group",
       input(id := "password2", placeholder := "Repeat Password", `type` := "text",
         cls := "form-control", required := "")),
     div(cls := "form-group",
       button("Register", `type` := "button",
-        cls := "btn btn-lg btn-primary btn-block")))
+        cls := "btn btn-lg btn-primary btn-block",
+        onclick := { () =>
+          val password1 = $("#password1").value().toString
+          val password2 = $("#password2").value().toString
+          dispatch(if (password1.equals(password2))
+            Register(
+              name = $("#name").value().toString,
+              username = $("#username").value().toString,
+              calories = Integer.parseInt($("#calories").value().toString),
+              password = password1)
+          else LoggedUser(Left("Passwords do not match!")))
+        }
+      )))
 
-  /*
-  div(cls := "btn-group",
-    if (userOpt().isEmpty)
-      button("Login", cls := "btn btn-default", onclick := { () => dispatch(Login("username", "password")) }
-      )
-    else
-      button("Logout", cls := "btn btn-default", onclick := { () => dispatch(Logout) }
-      ))
-  )*/
+
 }
 

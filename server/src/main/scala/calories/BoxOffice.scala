@@ -29,7 +29,7 @@ object BoxOffice extends LazyLogging {
     * Check the user in the "data base" then issue a ticket
     *
     * @param user to log in
-    * @param password to cjeck
+    * @param password to check
     * @return
     */
   def issue(user: String, password: String): LoggedUser = {
@@ -50,7 +50,8 @@ object BoxOffice extends LazyLogging {
         LoggedUser(Right(ticket),
           name = prp.getProperty("name"),
           username = user,
-          role = role)
+          role = role,
+          calories = prp.getProperty("calories").toInt)
       } else {
         LoggedUser(Left("Username or password incorrect!"))
       }
@@ -67,7 +68,7 @@ object BoxOffice extends LazyLogging {
     */
   def invalidate(ticket: Int) = {
     println(s"invalidate: ${ticket}")
-    if(ticket==0) {
+    if (ticket == 0) {
       LoggedUser(Left("Please login or register."))
     } else if (checkRole(ticket).isEmpty) {
       LoggedUser(Left("No such ticket!"))
@@ -81,28 +82,28 @@ object BoxOffice extends LazyLogging {
   /**
     * Register a new user storing it in
     *
-    * @param name of the new user
-    * @param user for login
-    * @param password for login
-    * @return
+    * @param req new user registration request
+    * @return the logged user (or a logged user with an error)
     */
-  def register(name: String, user: String, password: String) = {
-    println(s"register: ${name}/${password}")
-    if (!user.forall(_.isLetterOrDigit)) {
-      LoggedUser(Left("username must be all letter or digits"))
+  def register(req: Register) = {
+    println(s"register: ${req}")
+
+    if (!req.username.forall(_.isLetterOrDigit)) {
+      LoggedUser(Left("Username must be all letter or digits!"))
     } else {
-      val userFolder = file(file("data"), user)
+      val userFolder = file(file("data"), req.username)
       val prpFile = file(userFolder, "user.properties")
-      if(prpFile.exists()) {
-        LoggedUser(Left("username already exists"))
-      }  else {
+      if (prpFile.exists()) {
+        LoggedUser(Left("Username already exists!"))
+      } else {
         userFolder.mkdirs
         val prp = new Properties
-        prp.setProperty("name", name)
+        prp.setProperty("name", req.name)
         prp.setProperty("role", "user")
-        prp.setProperty("password", password)
+        prp.setProperty("password", req.password)
+        prp.setProperty("calories", req.calories.toString)
         prp.store(new FileWriter(prpFile), "# created by Calories Server")
-        issue(user, password)
+        issue(req.username, req.password)
       }
     }
   }

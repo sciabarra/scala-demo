@@ -8,11 +8,25 @@ package object calories {
 
   case class Logout(ticket: Int)
 
+  case class Register(name: String,
+                      username: String,
+                      calories: Int,
+                      password: String)
+
+
+  case class Meal(date: String,
+                  time: String,
+                  meal: String,
+                  calories: Int)
+
   // responses
-  case class LoggedUser(ticket: Either[String, Int],
-                        role: String = "",
-                        name: String = "",
-                        username: String = "")
+  case class LoggedUser(ticket: Either[String, Int]
+                        , role: String = ""
+                        , name: String = ""
+                        , username: String = ""
+                        , calories: Int = 0
+                        )
+
 
 }
 

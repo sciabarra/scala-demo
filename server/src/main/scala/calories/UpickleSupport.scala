@@ -21,6 +21,7 @@ import akka.http.scaladsl.model.{ ContentTypes, HttpCharsets, MediaTypes }
 import akka.http.scaladsl.unmarshalling.{ FromEntityUnmarshaller, Unmarshaller }
 import upickle._
 
+
 /**
   * Automatic to and from JSON marshalling/unmarshalling using *upickle* protocol.
   */
@@ -50,3 +51,4 @@ trait UpickleSupport {
     Marshaller.StringMarshaller.wrap(ContentTypes.`application/json`)(printer)
 }
 
+object UpickleSupport extends UpickleSupport
