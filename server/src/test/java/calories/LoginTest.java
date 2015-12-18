@@ -67,6 +67,9 @@ public class LoginTest extends TestUtil {
 
     @Test
     public void testRegister() {
+        // cleanup if an old file left
+        get("/cleanup/mike");
+
         // test wrong user
         given().body(map(
                 "username", "pinco pallino",

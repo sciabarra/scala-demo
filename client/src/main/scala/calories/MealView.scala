@@ -1,14 +1,13 @@
 package calories
 
-import diode.Dispatcher
-
 import diode.{Dispatcher, ModelR}
 import scalatags.JsDom.all._
+import org.scalajs.jquery.{jQuery => $}
 
 /**
   * Created by msciab on 16/12/15.
   */
-class MainView(dispatch: Dispatcher) {
+class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
 
   def render = div(cls := "row",
     div(cls := "col-md-3", caloriesForm),
@@ -21,16 +20,25 @@ class MainView(dispatch: Dispatcher) {
     h2("New meal:"),
     div(cls := "form-group",
       label(`for` := "meal", "Meal"),
-      input(id := "meal", tpe := "text", cls := "form-control")
+      input(id := "meal", tpe := "text",
+        value := "Meal",
+        cls := "form-control")
     ),
     div(cls := "form-group",
       label(`for` := "calories", "Calories"),
-      input(id := "calories", tpe := "number", min := "0", cls := "form-control")
+      input(id := "calories", tpe := "number", min := "0",
+        value := "100",
+        cls := "form-control")
     ),
     div(cls := "form-group",
       label(`for` := "date", "Date"),
       div(cls := "input-group",
-        input(id := "date", tpe := "text", cls := "form-control input-small"),
+        input(id := "date", tpe := "text",
+          value := {
+            val date = new scala.scalajs.js.Date()
+            "%04d-%02d-%02d".format(date.getFullYear(), date.getMonth()+1, date.getDay())
+          },
+          cls := "form-control input-small"),
         span(cls := "input-group-addon",
           i(cls := "glyphicon glyphicon-calendar")))
     ),
@@ -41,33 +49,44 @@ class MainView(dispatch: Dispatcher) {
         span(cls := "input-group-addon",
           i(cls := "glyphicon glyphicon-time")))
     ),
-    button("Add", `type` := "submit",
-      cls := "btn btn-lg btn-primary btn-block"),
+    button("Add", `type` := "button",
+      cls := "btn btn-lg btn-primary btn-block",
+      onclick := { () => dispatch(Meal(
+        date = $("#date").value.toString,
+        time = $("#time").value.toString,
+        meal = $("#meal").value.toString,
+        calories = Integer.parseInt($("#calories").value.toString)))
+      }
+    ),
 
     script(tpe := "text/javascript")(raw(
       """$(function() {
-            $("#date").datepicker({ format: 'mm-dd-yyyy' });
+            $("#date").datepicker({
+              format: 'mm-dd-yyyy',
+              autoclose: true,
+              immediateUpdates: true,
+
+            });
             $("#time").timepicker();
            });
       """))
   )
 
-  def caloriesTable = table(cls := "table table-bordered",
-    thead(
-      tr(
-        th("Date/Time"),
-        th("Time"),
-        th("Meal"),
-        th("Calories")
-      )),
-    tbody(
-      for (j <- 1 to 10)
-        yield tr(
-          td(s"Date ${j}"),
-          td(s"Time ${j}"),
-          td(s"Meal ${j}"),
-          td(s"Calories ${j}")
-        )))
+  def caloriesTable = div(cls := "panel panel-default",
+    table(cls := "table table-bordered",
+      thead(
+        tr(
+          th("Date/Time"),
+          th("Meal"),
+          th("Calories")
+        )),
+      tbody(
+        for (meal <- meals.value)
+          yield tr(
+            td(s"${meal.date} ${meal.time}"),
+            td(s"${meal.meal}"),
+            td(s"Meal ${meal.calories}")
+          ))))
 
   def caloriesFilter = form(role := "form", cls := "form-inline",
     div(cls := "form-group col-md-3",

@@ -63,7 +63,8 @@ object BoxOffice extends LazyLogging {
           username = user,
           role = role,
           calories = prp.getProperty("calories").toInt)
-        userByTicket += (ticket -> loggedUser)
+        userByTicket = userByTicket + (ticket -> loggedUser)
+        logger.debug(s"${userByTicket}")
         loggedUser
       } else {
         LoggedUser(Left("Username or password incorrect!"))
@@ -83,7 +84,7 @@ object BoxOffice extends LazyLogging {
     logger.debug(s"invalidate: ${ticket}")
     if (ticket == 0) {
       LoggedUser(Left("Please login or register."))
-    } else if (userByTicket(ticket).ticket.isLeft) {
+    } else if (userByTicket.get(ticket).isEmpty) {
       LoggedUser(Left("No such ticket!"))
     } else {
       userByTicket -= ticket

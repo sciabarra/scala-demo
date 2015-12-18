@@ -5,5 +5,4 @@ package calories
   */
 
 
-case class CaloriesModel(user: LoggedUser)
-
+case class CaloriesModel(user: LoggedUser, meals: Array[Meal])

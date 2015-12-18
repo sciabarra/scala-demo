@@ -38,6 +38,12 @@ class LoginHandler[M](modelRW: ModelRW[M, LoggedUser])
         }))
 
     case user: LoggedUser =>
-      updated(user)
+      // if the user is not correct
+      if (user.ticket.isLeft)
+        updated(user)
+      else
+        // set the user and request the current meals
+        updated(user, Effect(MealHandler.loadMeals(user.ticket.right.get)))
   }
+
 }

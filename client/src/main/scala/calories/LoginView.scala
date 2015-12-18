@@ -35,12 +35,12 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
     p("If you are already registered."),
     div(cls := "form-group",
       label("Login", `for` := "login"),
-      input(id := "login", `type` := "text",
+      input(id := "login", `type` := "text", value := "bob",
         cls := "form-control", autofocus := "", required := "")),
 
     div(cls := "form-group",
       label("Password", `for` := "password"),
-      input(id := "password", `type` := "password",
+      input(id := "password", `type` := "password", value := "password",
         cls := "form-control", required := "")),
 
     button("Login", `type` := "button",
@@ -49,7 +49,6 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
         val l = Login(
           $("#login").value().toString,
           $("#password").value().toString)
-        //println(l)
         dispatch(l)
       }
     )

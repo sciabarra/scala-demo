@@ -16,7 +16,9 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport("CaloriesApp")
 object CaloriesApp extends JSApp {
 
-  val mainView = new MainView(CaloriesCircuit)
+  val mealView = new MealView(
+    CaloriesCircuit.zoom(_.meals),
+    CaloriesCircuit)
   val loginView = new LoginView(
     CaloriesCircuit.zoom(_.user.ticket.left.get),
     CaloriesCircuit)
@@ -31,22 +33,20 @@ object CaloriesApp extends JSApp {
   def render(root: Element) {
 
     val loggedIn = CaloriesCircuit.zoom(_.user).value.ticket.isRight
+    val isUser = CaloriesCircuit.zoom(_.user).value.data.isRight
 
     val e = div(cls := "container",
       if (loggedIn)
-        mainView.render
+        if (isUser)
+          mealView.render
+        else
+          div("TODO").render
       else
         loginView.render
     ).render
 
-    /* hash match {
-       case "#table" => caloriesTableView.render
-       case "#form" => caloriesFormView.render
-       case _ => loginView.render
-     }*/
 
     // clear and update contents
-
     root.innerHTML = ""
     root.appendChild(e)
   }

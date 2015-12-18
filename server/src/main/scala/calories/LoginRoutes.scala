@@ -26,7 +26,7 @@ trait LoginRoutes
     }
   } ~ path("logout" / IntNumber) {
     ticket =>
-      logger.debug("logout")
+      logger.debug(s"logout/${ticket}")
       complete {
         BoxOffice.invalidate(ticket)
       }

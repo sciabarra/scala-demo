@@ -25,8 +25,8 @@ package object calories {
                         , name: String = ""
                         , username: String = ""
                         , calories: Int = 0
+                        , data: Either[Array[Register], Array[Meal]] = Left(Array.empty)
                         )
-
 
 }
 

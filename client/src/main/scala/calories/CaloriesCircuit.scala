@@ -9,11 +9,15 @@ object CaloriesCircuit extends Circuit[CaloriesModel] {
 
   val msg = """Please login or register.""".stripMargin
 
-  protected var model: CaloriesModel = CaloriesModel(LoggedUser(Left(msg)))
+  protected var model: CaloriesModel = CaloriesModel(LoggedUser(Left(msg)), Array.empty[Meal])
 
   protected def loginHandler = new LoginHandler(
     zoomRW(m => m.user) // extraction fn
       ((m, v) => m.copy(user = v))) //  update fn
 
-  override def actionHandler = combineHandlers(loginHandler)
+  protected def mealHandler = new MealHandler(
+    zoomRW(m => m.user) // extraction fn
+      ((m, v) => m.copy(user = v))) //  update fn
+
+  override def actionHandler = combineHandlers(loginHandler, mealHandler)
 }
