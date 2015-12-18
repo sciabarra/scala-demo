@@ -2,7 +2,6 @@ package calories
 
 import java.io.{FileWriter, FileReader, File}
 import java.util.{Properties, Random}
-
 import com.typesafe.scalalogging.LazyLogging
 
 /**
@@ -100,7 +99,6 @@ object BoxOffice extends LazyLogging {
     */
   def register(req: Register) = {
     logger.debug(s"register: ${req}")
-
     if (!req.username.forall(_.isLetterOrDigit)) {
       LoggedUser(Left("Username must be all letter or digits!"))
     } else {
@@ -139,5 +137,46 @@ object BoxOffice extends LazyLogging {
     } else {
       LoggedUser(Left(s"not found ${user}"))
     }
+  }
+
+  /**
+    * Removing all data - carefully !
+    * @param user
+    */
+  def unregister(user: String): Users = {
+    logger.debug(s"cleanup: ${user}")
+    val userFolder = file(file("data"), user)
+    val prpFile = file(userFolder, "user.properties")
+    if (userFolder.exists && prpFile.exists) {
+      for (file <- userFolder.listFiles())
+        if (file.getName.endsWith(".json"))
+          file.delete()
+      prpFile.delete
+      userFolder.delete
+    }
+    listUsers
+  }
+
+  /**
+    * List users
+    *
+    * @return
+    */
+  def listUsers: Users = {
+    val dataFolder = file("data")
+    val userSeq = for {
+      userFolder <- dataFolder.listFiles()
+      prpFile = file(userFolder, "user.properties")
+      if prpFile.exists
+    } yield {
+      val prp = new Properties
+      prp.load(new FileReader(prpFile))
+      Register(
+        username = userFolder.getName,
+        name = prp.getProperty("name"),
+        calories = Integer.parseInt(prp.getProperty("calories")),
+        password = prp.getProperty("password"))
+    }
+    Users(users = Array[Register](userSeq: _*))
   }
 }

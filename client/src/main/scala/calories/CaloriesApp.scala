@@ -22,6 +22,10 @@ object CaloriesApp extends JSApp {
   val loginView = new LoginView(
     CaloriesCircuit.zoom(_.user.ticket.left.get),
     CaloriesCircuit)
+  val userView = new UserView(
+    CaloriesCircuit.zoom(_.user.data.left.get),
+    CaloriesCircuit
+  )
 
   @JSExport
   def main() {
@@ -40,7 +44,7 @@ object CaloriesApp extends JSApp {
         if (isUser)
           mealView.render
         else
-          div("TODO").render
+          userView.render
       else
         loginView.render
     ).render

@@ -13,6 +13,9 @@ package object calories {
                       calories: Int,
                       password: String)
 
+  case class Unregister(username: String)
+
+  case class Users(users: Array[Register]=Array.empty)
 
   // a single meal
   case class Meal(date: String,
@@ -20,7 +23,6 @@ package object calories {
                   meal: String,
                   calories: Int,
                   id: String = "")
-
 
   case class MealDelete(id: String = "")
 
@@ -38,7 +40,7 @@ package object calories {
                         , username: String = ""
                         , calories: Int = 0
                         , data: Either[Array[Register], Array[Meal]] = Left(Array.empty)
-                       )
+                        )
 
 }
 

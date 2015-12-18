@@ -58,7 +58,10 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
         calories = Integer.parseInt($("#calories").value.toString)))
       }
     ),
-
+    button("Logout", `type` := "button",
+      cls := "btn btn-lg btn-primary btn-block",
+      onclick := { () => dispatch(Logout(0)) }
+    ),
     script(tpe := "text/javascript")(raw(
       """$(function() {
             $("#date").datepicker({

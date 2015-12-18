@@ -17,7 +17,8 @@ trait LoginRoutes
   val loginRoutes = path("login") {
     logger.debug("login")
     post {
-      formField('username.as[String], 'password.as[String]) {
+      formField('username.as[String],
+        'password.as[String]) {
         (username, password) =>
           complete {
             BoxOffice.issue(username, password)
@@ -44,6 +45,22 @@ trait LoginRoutes
     user =>
       complete {
         BoxOffice.cleanup(user)
+      }
+  } ~ path("unregister" / IntNumber / Segment) {
+    (ticket, user) =>
+      complete {
+        if (BoxOffice.checkRole(ticket, "admin"))
+          BoxOffice.unregister(user)
+        else
+          "Security Violation"
+      }
+  } ~ path("users" / IntNumber) {
+    (ticket) =>
+      complete {
+        if (BoxOffice.checkRole(ticket, "admin"))
+          BoxOffice.listUsers
+        else
+          "Security Violation"
       }
   }
 }
