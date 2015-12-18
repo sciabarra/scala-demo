@@ -15,10 +15,7 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
 
   def splash = div(cls := "jumbotron",
     h1("Calories Counter"),
-    h2(
-      """
-      On a diet?
-      Register here,set your daily calories target
+    h3("""On a diet? Register here,set your daily calories target
       and keep your daily dose of calories under control."""))
 
   def note = {
@@ -85,10 +82,10 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
               username = $("#username").value().toString,
               calories = Integer.parseInt($("#calories").value().toString),
               password = password1)
-          else LoggedUser(Left("Passwords do not match!")))
+          else
+            LoggedUser(Left("Passwords do not match!")))
         }
       )))
-
 
 }
 

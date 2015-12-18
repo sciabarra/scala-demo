@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
  */
 public class DemoTest extends TestUtil {
 
-    @Test
+    //@Test
     public void testRegister() {
         // test wrong user
         given().contentType("application/json; charset=UTF-8")

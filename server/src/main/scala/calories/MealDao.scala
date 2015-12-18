@@ -2,6 +2,8 @@ package calories
 
 import java.io.{FileWriter, File}
 
+import com.typesafe.scalalogging.LazyLogging
+
 import scala.io.Source
 
 import upickle._
@@ -9,9 +11,11 @@ import upickle._
 /**
   * Dao to read/write meals in a file (as serialized json)
   */
-object MealDao {
+object MealDao extends LazyLogging {
 
   // utils
+  var currId: Long = System.currentTimeMillis
+
   def file(dir: File, file: String) = new File(dir, file)
 
   def file(dir: String) = new File(dir)
@@ -71,21 +75,20 @@ object MealDao {
     */
   def add(ticket: Int, meal: Meal): Array[Meal] = {
     val meals = load(ticket)
-    save(ticket, meals :+ meal)
+    currId = currId + 1
+    save(ticket, meals :+ (meal.copy(id = currId.toHexString)))
   }
-
   /**
     * Remove the meal by index
     *
     * @param ticket
-    * @param index
+    * @param id
     * @return
     */
-  def remove(ticket: Int, index: Int): Array[Meal] = {
+  def remove(ticket: Int, id: String): Array[Meal] = {
     val meals = load(ticket)
-    val buf = meals.toBuffer
-    buf.remove(index)
-    save(ticket, buf.toArray)
+    val newMeals = meals.filter(_.id != id)
+    save(ticket, newMeals)
   }
 
 }

@@ -35,24 +35,28 @@ public class MealTest extends TestUtil {
 
     @After
     public void logout() {
-        get("/logout/" + ticket).then().log().body();
+
+        //get("/logout/" + ticket).then().log().body();
     }
 
     @Test
-    public void test() {
-        given().contentType("application/json; charset=UTF-8")
+    public void testAddRemove() {
+        String id = given()
+                .contentType("application/json; charset=UTF-8")
                 .body(map("date", "09-07-1968",
                         "time", "17:55",
                         "meal", "Lunch",
                         "calories", "800")
                 ).post("/meal/" + ticket).then()
                 .log().body()
-        ;
+                .extract().path("meals[0].id");
+
+        System.out.println(" >>>> " + id);
+        // register
         given().contentType("application/json; charset=UTF-8")
-                .body(0)
-                .delete("/meal/" + ticket).then()
+                //.body("\""+id+"\"")
+                .delete("/meal/" + ticket + "/" + id).then()
                 .log().body()
         ;
     }
-
 }

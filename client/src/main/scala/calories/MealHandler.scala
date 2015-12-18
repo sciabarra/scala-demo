@@ -19,10 +19,12 @@ class MealHandler[M](modelRW: ModelRW[M, LoggedUser])
       val ticket = modelRW.value.ticket.right.get
       effectOnly(Effect(MealHandler.saveMeal(ticket, meal)))
 
-    case meals: Array[Meal] =>
-      println(meals.size)
-      //val user =
-      updated(modelRW.value.copy(data=Right(meals)))
+    case meals: Meals =>
+      updated(modelRW.value.copy(data = Right(meals.meals)))
+
+    case MealDelete(id) =>
+      val ticket = modelRW.value.ticket.right.get
+      effectOnly(Effect(MealHandler.deleteMeal(ticket, id)))
   }
 }
 
@@ -32,12 +34,19 @@ object MealHandler {
   def loadMeals(ticket: Int) = Ajax.get(
     s"${dom.location.origin}/meal/${ticket}")
     .map { r =>
-      read[Array[Meal]](r.responseText)
+      read[Meals](r.responseText)
     }
 
   def saveMeal(ticket: Int, meal: Meal) = Ajax.post(
     s"${dom.location.origin}/meal/${ticket}", write(meal), 0, json)
     .map { r =>
-      read[Array[Meal]](r.responseText)
+      read[Meals](r.responseText)
     }
+
+  def deleteMeal(ticket: Int, id: String) = Ajax.delete(
+    s"${dom.location.origin}/meal/${ticket}/${id}")
+    .map { r =>
+      read[Meals](r.responseText)
+    }
+
 }

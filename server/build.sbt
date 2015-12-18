@@ -18,9 +18,9 @@ libraryDependencies ++= Seq("junit" % "junit" % "4.11" % "test"
      , "com.typesafe.akka"      % "akka-http-core-experimental_2.11"       % akkaStreamV
      , "com.typesafe.akka"      % "akka-http-experimental_2.11"            % akkaStreamV
      , "com.typesafe.akka"      % "akka-http-testkit-experimental_2.11"    % akkaStreamV
-     , "com.jayway.restassured" % "rest-assured" % "2.4.1" % "test"
-     , "com.jayway.restassured" % "json-path" % "2.4.1" % "test"
-     , "com.jayway.restassured" % "json-schema-validator" % "2.4.1" % "test"
+     , "com.jayway.restassured" % "rest-assured" % "2.8.0" % "test"
+     , "com.jayway.restassured" % "json-path" % "2.8.0" % "test"
+     , "com.jayway.restassured" % "json-schema-validator" % "2.8.0" % "test"
      , "com.lihaoyi"            %% "upickle" % "0.2.8"
      , "org.webjars.bower"      % "bootstrap" % "3.0.0"
      , "org.webjars"            % "bootstrap-datepicker" % "1.4.0"
