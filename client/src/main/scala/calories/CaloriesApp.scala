@@ -17,7 +17,7 @@ import scala.scalajs.js.annotation.JSExport
 object CaloriesApp extends JSApp {
 
   val mealView = new MealView(
-    CaloriesCircuit.zoom(_.meals),
+    CaloriesCircuit.zoom(_.user.data.right.get),
     CaloriesCircuit)
   val loginView = new LoginView(
     CaloriesCircuit.zoom(_.user.ticket.left.get),

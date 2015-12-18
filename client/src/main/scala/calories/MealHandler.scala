@@ -21,6 +21,7 @@ class MealHandler[M](modelRW: ModelRW[M, LoggedUser])
 
     case meals: Array[Meal] =>
       println(meals.size)
+      //val user =
       updated(modelRW.value.copy(data=Right(meals)))
   }
 }
