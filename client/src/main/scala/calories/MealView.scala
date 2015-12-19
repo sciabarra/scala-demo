@@ -1,6 +1,8 @@
 package calories
 
 import diode.{Dispatcher, ModelR}
+import org.scalajs.dom
+import scala.util.Try
 import scalatags.JsDom.all._
 import org.scalajs.jquery.{jQuery => $}
 
@@ -20,18 +22,25 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
       caloriesTable))
 
   def caloriesForm = form(role := "form",
-    h2("New meal:"),
+    h2("Add a Meal"),
     div(cls := "form-group",
       label(`for` := "meal", "Meal"),
       input(id := "meal", tpe := "text",
-        value := "Meal",
+        value := "",
         cls := "form-control")
     ),
     div(cls := "form-group",
       label(`for` := "calories", "Calories"),
       input(id := "calories", tpe := "number", min := "0",
-        value := "100",
+        value := "",
         cls := "form-control")
+    ),
+    div(cls := "form-group",
+      label(`for` := "time", "Time"),
+      div(cls := "input-group bootstrap-timepicker timepicker",
+        input(id := "time", tpe := "text", cls := "form-control input-small"),
+        span(cls := "input-group-addon",
+          i(cls := "glyphicon glyphicon-time")))
     ),
     div(cls := "form-group",
       label(`for` := "date", "Date"),
@@ -42,20 +51,25 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
         span(cls := "input-group-addon",
           i(cls := "glyphicon glyphicon-calendar")))
     ),
-    div(cls := "form-group",
-      label(`for` := "time", "Time"),
-      div(cls := "input-group bootstrap-timepicker timepicker",
-        input(id := "time", tpe := "text", cls := "form-control input-small"),
-        span(cls := "input-group-addon",
-          i(cls := "glyphicon glyphicon-time")))
-    ),
     button("Add", `type` := "button",
       cls := "btn btn-lg btn-primary btn-block",
-      onclick := { () => dispatch(Meal(
-        date = $("#date").value.toString,
-        time = $("#time").value.toString,
-        meal = $("#meal").value.toString,
-        calories = Integer.parseInt($("#calories").value.toString)))
+      onclick := { () =>
+
+        val date = $("#date").value.toString
+        val time = $("#time").value.toString
+        val meal = $("#meal").value.toString
+        val calories = Try(Integer.parseInt($("#calories").value.toString))
+        if (meal.trim.size == 0) {
+          dom.alert("Enter a meal.")
+        } else if (calories.isFailure || calories.get < 1 || calories.get > 10000) {
+          dom.alert("Enter a meaningful amount of calories.")
+        } else if (time.trim.size == 0) {
+          dom.alert("Enter time.")
+        } else if (date.trim.size == 0) {
+          dom.alert("Enter date.")
+        } else {
+          dispatch(Meal(date, time, meal, calories.get))
+        }
       }
     ),
     button("Logout", `type` := "button",
@@ -72,7 +86,8 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
             });
             $("#time").timepicker({
                showMeridian: false,
-               showSeconds: true
+               showSeconds: false,
+               defaultTime: false
             });
            });
       """))
