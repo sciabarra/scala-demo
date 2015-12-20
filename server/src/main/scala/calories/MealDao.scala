@@ -3,6 +3,7 @@ package calories
 import java.io.{FileWriter, File}
 
 import com.typesafe.scalalogging.LazyLogging
+import akka.http.scaladsl.model.{DateTime => _}
 
 import scala.io.Source
 
@@ -28,7 +29,7 @@ object MealDao extends LazyLogging {
   }
 
   /**
-    * Load data by ticket
+    * Load all data by ticket
     *
     * @param ticket
     * @return
@@ -41,6 +42,32 @@ object MealDao extends LazyLogging {
       Array.empty[Meal]
     }
   }
+
+  import org.joda.time.{DateTime, LocalDate, LocalTime}
+
+  def loadFiltered(ticket: Int,
+                   fromDate: LocalDate, toDate: LocalDate,
+                   fromTime: LocalTime, toTime: LocalTime): Array[Meal] =
+    load(ticket).
+      map { meal =>
+        val dt = new DateTime(s"${meal.date}T${meal.time}")
+        //println(s"${dt}->${meal}")
+        dt -> meal
+      }. // array of meals
+      sortWith(_._1.toInstant.getMillis < _._1.toInstant.getMillis). // array of (dateTimeOfMeal, meal)
+      filter { dtMeal =>
+      val ld = new LocalDate(dtMeal._1) // get a date without time
+      (ld.isEqual(fromDate) || ld.isAfter(fromDate)) &&
+        (ld.isBefore(toDate))
+    }.filter { dtMeal =>
+      val lt = new LocalTime(dtMeal._1) // get a time without date
+      (lt.isEqual(fromTime) || lt.isAfter(fromTime)) &&
+        (lt.isEqual(toTime) || lt.isBefore(toTime))
+    }.
+      map(_._2)
+
+  // map of meals
+
 
   /**
     * Save data by ticket
@@ -78,6 +105,7 @@ object MealDao extends LazyLogging {
     currId = currId + 1
     save(ticket, meals :+ (meal.copy(id = currId.toHexString)))
   }
+
   /**
     * Remove the meal by index
     *

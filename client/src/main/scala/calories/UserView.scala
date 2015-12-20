@@ -16,7 +16,6 @@ class UserView(users: ModelR[Array[Register]], dispatch: Dispatcher) {
     div(cls := "col-md-3")
   )
 
-
   def logout = button("Logout", `type` := "button",
     cls := "btn btn-lg btn-primary btn-block",
     onclick := { () => dispatch(Logout(0)) }

@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
  * Created by msciab on 27/06/15.
  */
 @RunWith(JUnit4.class)
-public class MealTest extends TestUtil {
+public class MealEditTest extends TestUtil {
     int ticket;
 
     @Before

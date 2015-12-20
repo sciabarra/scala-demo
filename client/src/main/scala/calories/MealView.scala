@@ -12,14 +12,18 @@ import org.scalajs.jquery.{jQuery => $}
 class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
 
   val date = new scala.scalajs.js.Date()
-  val today = "%04d-%02d-%02d".format(date.getFullYear(), date.getMonth() + 1, date.getDay())
+  val today = "%04d-%02d-%02d".format(date.getFullYear(), date.getMonth(), date.getDate())
 
   def render = div(cls := "row",
     div(cls := "col-md-3", caloriesForm),
-    //div(cls := "col-md-1"),
-    div(cls := "col-md-7",
-      caloriesFilter,
-      caloriesTable))
+    div(cls := "col-md-6", caloriesTable, logout),
+    div(cls := "col-md-3", caloriesFilter))
+
+
+  def logout = button("Logout", `type` := "button",
+    cls := "btn btn-lg btn-primary btn-block",
+    onclick := { () => dispatch(Logout(0)) }
+  )
 
   def caloriesForm = form(role := "form",
     h2("Add a Meal"),
@@ -72,10 +76,6 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
         }
       }
     ),
-    button("Logout", `type` := "button",
-      cls := "btn btn-lg btn-primary btn-block",
-      onclick := { () => dispatch(Logout(0)) }
-    ),
     script(tpe := "text/javascript")(raw(
       """$(function() {
             $("#date").datepicker({
@@ -109,19 +109,25 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
               input(tpe := "button", value := "Delete",
                 onclick := { () => dispatch(MealDelete(meal.id)) }))))))
 
-  def caloriesFilter = form(role := "form", cls := "form-inline",
-    div(cls := "form-group col-md-3",
+  def caloriesFilter = form(role := "form",
+    h4("Date Range"),
+    div(cls := "form-group",
       input(id := "datefilter1", tpe := "text", value := today,
         cls := "form-control", placeholder := "Start date")),
-    div(cls := "form-group col-md-3",
-      input(id := "timefilter1", tpe := "text", value := "00:00",
-        cls := "form-control", placeholder := "Start time")),
-    div(cls := "form-group col-md-3",
+    div(cls := "form-group",
       input(id := "datefilter2", tpe := "text",
         cls := "form-control", placeholder := "End date")),
-    div(cls := "form-group col-md-3",
+    h4("Time Range"),
+    div(cls := "form-group",
+      input(id := "timefilter1", tpe := "text", value := "00:00",
+        cls := "form-control", placeholder := "Start time")),
+    div(cls := "form-group",
       input(id := "timefilter2", tpe := "text",
         cls := "form-control", placeholder := "End time")),
+    button("Filter", `type` := "button",
+      cls := "btn btn-lg btn-primary btn-block",
+      onclick := { () => dom.alert("Filter") }
+    ),
     script(tpe := "text/javascript")(raw(
       """$(function() {
             $("#datefilter1").datepicker({ format: 'yyyy-mm-dd' });
