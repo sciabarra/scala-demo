@@ -18,7 +18,7 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
   def splash = div(cls := "jumbotron",
     h1("Calories Counter"),
     h3(
-      """On a diet? Register here,set your daily calories target
+      """On a diet? Register here, set your daily calories target
       and keep your daily dose of calories under control."""))
 
   def note = {

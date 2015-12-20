@@ -12,7 +12,7 @@ import org.scalajs.jquery.{jQuery => $}
 class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
 
   val date = new scala.scalajs.js.Date()
-  val today = "%04d-%02d-%02d".format(date.getFullYear(), date.getMonth(), date.getDate())
+  val today = "%04d-%02d-%02d".format(date.getFullYear(), date.getMonth() + 1, date.getDate())
 
   def render = div(cls := "row",
     div(cls := "col-md-3", caloriesForm),
@@ -85,9 +85,9 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
               showToday: true
             });
             $("#time").timepicker({
-               showMeridian: false,
-               showSeconds: false,
-               defaultTime: false
+                       showMeridian: false,
+                       showSeconds: false,
+                       minuteStep: 1
             });
            });
       """))
@@ -118,15 +118,15 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
       input(id := "datefilter2", tpe := "text",
         cls := "form-control", placeholder := "End date")),
     h4("Time Range"),
-    div(cls := "form-group",
+    div(cls := "form-group bootstrap-timepicker timepicker",
       input(id := "timefilter1", tpe := "text", value := "00:00",
         cls := "form-control", placeholder := "Start time")),
-    div(cls := "form-group",
-      input(id := "timefilter2", tpe := "text",
+    div(cls := "form-group bootstrap-timepicker timepicker",
+      input(id := "timefilter2", tpe := "text", value := "23:59",
         cls := "form-control", placeholder := "End time")),
     button("Filter", `type` := "button",
       cls := "btn btn-lg btn-primary btn-block",
-      onclick := { () => dom.alert("Filter") }
+      onclick := { () => dispatch(MealFilter) }
     ),
     script(tpe := "text/javascript")(raw(
       """$(function() {
@@ -135,14 +135,12 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
             $("#timefilter1").timepicker({
               defaultTime: false,
               showMeridian: false,
-              template: "dropdown",
-              appendWidgetTo: "#timefilter1"
+              minuteStep: 1
             });
             $("#timefilter2").timepicker({
               defaultTime: false,
               showMeridian: false,
-              template: "dropdown",
-              appendWidgetTo: "#timefilter2"
+              minuteStep: 1
             });
            });
       """))

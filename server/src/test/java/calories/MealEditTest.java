@@ -43,7 +43,7 @@ public class MealEditTest extends TestUtil {
     public void testAddRemove() {
         String id = given()
                 .contentType("application/json; charset=UTF-8")
-                .body(map("date", "09-07-1968",
+                .body(map("date", "1968-09-07",
                         "time", "17:55",
                         "meal", "Lunch",
                         "calories", "800")

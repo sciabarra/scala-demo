@@ -26,10 +26,8 @@ package object calories {
 
   case class MealDelete(id: String = "")
 
-  case class MealFilter(fromDate: Option[String] = None ,
-                        fromTime: Option[String] = None,
-                        toDate: Option[String] = None,
-                        toTime: Option[String] = None)
+  case object MealFilter
+
   // meals
   case class Meals(meals: Array[Meal]= Array.empty)
 
