@@ -1,4 +1,5 @@
-Instructions
+Installation from Sources
+=========================
 
 1. Install SBT from here:
 
@@ -17,14 +18,19 @@ sbt run
 
 then open the browser as http://localhost:9000
 
-4. Execute Functional (REST API) Tests:
+4. Execute Functional Tests on REST API:
 
-(while the server is running!)
+(they must be while the server is running in localhost!)
 
 open another terminal
-cd in the main 
+cd in the main folder
 sbt s/test
 
-KNOWN ISSUE: on windows it does not delete the user folder (probably a locking issue)
+KNOWN ISSUES
 
+- occasionally one test fails the first time it is run
+to be investigated
+
+- the server after a few minutes throws an exception
+it is a documented issues in akka-http-M2
 
