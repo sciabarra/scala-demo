@@ -15,21 +15,22 @@ package object calories {
 
   case class Unregister(username: String)
 
-  case class Users(users: Array[Register]=Array.empty)
+  case class Users(users: Array[Register] = Array.empty)
 
   // a single meal
   case class Meal(date: String,
                   time: String,
                   meal: String,
                   calories: Int,
-                  id: String = "")
+                  id: String = "",
+                  isOver: Boolean = false)
 
   case class MealDelete(id: String = "")
 
   case object MealFilter
 
   // meals
-  case class Meals(meals: Array[Meal]= Array.empty)
+  case class Meals(meals: Array[Meal] = Array.empty)
 
   // responses
   case class LoggedUser(ticket: Either[String, Int]
@@ -38,7 +39,7 @@ package object calories {
                         , username: String = ""
                         , calories: Int = 0
                         , data: Either[Array[Register], Array[Meal]] = Left(Array.empty)
-                        )
+                       )
 
 }
 

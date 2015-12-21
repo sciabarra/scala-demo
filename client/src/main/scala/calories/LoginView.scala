@@ -35,12 +35,12 @@ class LoginView(message: ModelR[String], dispatch: Dispatcher) {
     p("If you are already registered."),
     div(cls := "form-group",
       label("Login", `for` := "login"),
-      input(id := "login", `type` := "text", value := "bob",
+      input(id := "login", `type` := "text", value := "",
         cls := "form-control", autofocus := "", required := "")),
 
     div(cls := "form-group",
       label("Password", `for` := "password"),
-      input(id := "password", `type` := "password", value := "password",
+      input(id := "password", `type` := "password", value := "",
         cls := "form-control", required := "")),
 
     button("Login", `type` := "button",

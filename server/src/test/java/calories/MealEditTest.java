@@ -35,8 +35,7 @@ public class MealEditTest extends TestUtil {
 
     @After
     public void logout() {
-
-        //get("/logout/" + ticket).then().log().body();
+        get("/logout/" + ticket).then().log().body();
     }
 
     @Test
@@ -51,7 +50,6 @@ public class MealEditTest extends TestUtil {
                 .log().body()
                 .extract().path("meals[0].id");
 
-        System.out.println(" >>>> " + id);
         // register
         given().contentType("application/json; charset=UTF-8")
                 //.body("\""+id+"\"")

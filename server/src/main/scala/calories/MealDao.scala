@@ -44,13 +44,36 @@ object MealDao extends LazyLogging {
     }
   }
 
-  def loadFiltered(ticket: Int, filter: Filter): Array[Meal] =
-    load(ticket).
-      map { meal =>
-        val dt = new DateTime(s"${meal.date}T${meal.time}")
-        //println(s"${dt}->${meal}")
-        dt -> meal
-      }. // array of meals
+  def checkLimits(meals: Array[Meal], limit: Int): Map[String,Boolean] = {
+
+    def sumCalories(meals: Array[Meal]) = meals.map(_.calories).sum
+
+    meals.groupBy(_.date) // date -> List(meal)
+      .map(x => x._1 -> (sumCalories(x._2) > limit)) // checkCalories over limit
+
+  }
+
+  /**
+    *
+    * Load all data , filter by date/time, add the color
+    *
+    * @param ticket
+    * @param filter
+    * @return
+    */
+  def loadFiltered(ticket: Int, filter: Filter): Array[Meal] = {
+    // load all the meals
+    val all = load(ticket)
+    val overLimitMap = checkLimits(all, BoxOffice.getUser(ticket).calories)
+
+    logger.debug("limitMap=${overLimitMap}")
+
+
+    val filteredList = all.map { meal =>
+      val dt = new DateTime(s"${meal.date}T${meal.time}")
+      //println(s"${dt}->${meal}")
+      dt -> meal
+    }. // array of meals
       sortWith(_._1.toInstant.getMillis < _._1.toInstant.getMillis). // array of (dateTimeOfMeal, meal)
       filter { dtMeal =>
       val ld = new LocalDate(dtMeal._1) // get a date without time
@@ -61,6 +84,10 @@ object MealDao extends LazyLogging {
       (lt.isEqual(filter.fromTime) || lt.isAfter(filter.fromTime)) &&
         (lt.isEqual(filter.toTime) || lt.isBefore(filter.toTime))
     }.map(_._2) // extra meals again
+
+     // .map(_.copy(_.isOver))
+    filteredList.map(x => x.copy(isOver=overLimitMap(x.date)))
+  }
 
 
   /**

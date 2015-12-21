@@ -101,9 +101,9 @@ class MealView(meals: ModelR[Array[Meal]], dispatch: Dispatcher) {
         th("Calories")
       )), tbody(
         for (meal <- meals.value)
-          yield tr(
+          yield tr(cls := s"${if(meal.isOver) "danger" else "success"}",
             td(width := "20%", i(s"${meal.date} ${meal.time}")),
-            td(width := "40%", s"${meal.meal}"),
+            td(width := "40%", span(s"${meal.meal}")),
             td(width := "15%", b(s"${meal.calories}")),
             td(width := "15%",
               input(tpe := "button", value := "Delete",

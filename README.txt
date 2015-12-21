@@ -8,10 +8,17 @@ Instructions
 
 Use this command
 
- sbt s/assets s/compile c/fastOptJs
+ sbt s/assets s/compile c/fastOptJS
 
 3. Run
 
  sbt s/run
 
 then open the browser as http://localhost:9000
+
+4. Execute Functional (REST API) Tests:
+
+(while the server is running!)
+
+sbt s/test
+
