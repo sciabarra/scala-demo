@@ -68,7 +68,6 @@ object MealDao extends LazyLogging {
 
     logger.debug("limitMap=${overLimitMap}")
 
-
     val filteredList = all.map { meal =>
       val dt = new DateTime(s"${meal.date}T${meal.time}")
       //println(s"${dt}->${meal}")

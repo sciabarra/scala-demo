@@ -51,7 +51,9 @@ object BoxOffice extends LazyLogging {
     logger.debug(s"${prpFile.getAbsolutePath}")
     if (userFolder.exists && prpFile.exists) {
       val prp = new Properties
-      prp.load(new FileReader(prpFile))
+      val fr = new FileReader(prpFile)
+      prp.load(fr)
+      fr.close
       // check password
       if (prp.getProperty("password") == password) {
         // generate ticket and record it
@@ -149,10 +151,14 @@ object BoxOffice extends LazyLogging {
     val prpFile = file(userFolder, "user.properties")
     if (userFolder.exists && prpFile.exists) {
       for (file <- userFolder.listFiles())
-        if (file.getName.endsWith(".json"))
+        if (file.getName.endsWith(".json")) {
           file.delete()
+          logger.debug(s"deleting ${file.getAbsolutePath}")
+        }
       prpFile.delete
+      logger.debug(s"deleting ${prpFile.getAbsolutePath}")
       userFolder.delete
+      logger.debug(s"deleting ${userFolder.getAbsolutePath}")
     }
     listUsers
   }
@@ -170,7 +176,9 @@ object BoxOffice extends LazyLogging {
       if prpFile.exists
     } yield {
       val prp = new Properties
-      prp.load(new FileReader(prpFile))
+      val fr = new FileReader(prpFile)
+      prp.load(fr)
+      fr.close
       Register(
         username = userFolder.getName,
         name = prp.getProperty("name"),

@@ -12,7 +12,8 @@ Use this command
 
 3. Run
 
- sbt s/run
+cd server
+sbt run
 
 then open the browser as http://localhost:9000
 
@@ -20,5 +21,10 @@ then open the browser as http://localhost:9000
 
 (while the server is running!)
 
+open another terminal
+cd in the main 
 sbt s/test
+
+KNOWN ISSUE: on windows it does not delete the user folder (probably a locking issue)
+
 
