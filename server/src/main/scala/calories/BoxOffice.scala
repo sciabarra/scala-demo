@@ -1,6 +1,6 @@
 package calories
 
-import java.io.{FileWriter, FileReader, File}
+import java.io._
 import java.util.{Properties, Random}
 import com.typesafe.scalalogging.LazyLogging
 
@@ -51,9 +51,9 @@ object BoxOffice extends LazyLogging {
     logger.debug(s"${prpFile.getAbsolutePath}")
     if (userFolder.exists && prpFile.exists) {
       val prp = new Properties
-      val fr = new FileReader(prpFile)
-      prp.load(fr)
-      fr.close
+      val fis = new FileInputStream(prpFile)
+      prp.load(fis)
+      fis.close
       // check password
       if (prp.getProperty("password") == password) {
         // generate ticket and record it
@@ -115,7 +115,9 @@ object BoxOffice extends LazyLogging {
         prp.setProperty("role", "user")
         prp.setProperty("password", req.password)
         prp.setProperty("calories", req.calories.toString)
-        prp.store(new FileWriter(prpFile), "# created by Calories Server")
+        val fos = new FileOutputStream(prpFile)
+        prp.store(fos, "# created by Calories Server")
+        fos.close
         issue(req.username, req.password)
       }
     }
@@ -172,13 +174,14 @@ object BoxOffice extends LazyLogging {
     val dataFolder = file("data")
     val userSeq = for {
       userFolder <- dataFolder.listFiles()
+      if userFolder.getName != "admin"
       prpFile = file(userFolder, "user.properties")
       if prpFile.exists
     } yield {
       val prp = new Properties
-      val fr = new FileReader(prpFile)
-      prp.load(fr)
-      fr.close
+      val fis = new FileInputStream(prpFile)
+      prp.load(fis)
+      fis.close
       Register(
         username = userFolder.getName,
         name = prp.getProperty("name"),
